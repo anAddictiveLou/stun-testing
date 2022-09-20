@@ -237,7 +237,7 @@ bool SetSocketBlockingEnabled(int fd, bool blocking)
 #else
    int flags = fcntl(fd, F_GETFL, 0);
    if (flags == -1) return false;
-   flags = blocking ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK);
+   flags = blocking ? (flags ^= O_NONBLOCK) : (flags | O_NONBLOCK);
    return (fcntl(fd, F_SETFL, flags) == 0) ? true : false;
 #endif
 }
