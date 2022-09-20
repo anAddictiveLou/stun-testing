@@ -175,9 +175,18 @@ void communicate(int sockfd)
 	static int count1 = 0;
 	char temp[30] = "Hole Punching\n";
 
-	//int flags = guard(fcntl(sockfd, F_GETFL), "could not get file flags");
-	//guard(fcntl(sockfd, F_SETFL, flags | O_NONBLOCK), "could not set file flags");
-	SetSocketBlockingEnabled(sockfd, 1);
+	/*Set socket to non-blocking socket*/
+	int opts;
+	opts = fcntl(sockfd,F_GETFL);
+    if (opts < 0) {
+        perror("fcntl(F_GETFL)");
+        exit(EXIT_FAILURE);
+    }
+    opts = (opts | O_NONBLOCK);
+    if (fcntl(sockfd,F_SETFL,opts) < 0) {
+        perror("fcntl(F_SETFL)");
+        exit(EXIT_FAILURE);
+    }
 
 	while (1)
 	{	
@@ -207,7 +216,14 @@ void communicate(int sockfd)
             fflush(stdout);
         }
 
-	SetSocketBlockingEnabled(sockfd, 0);
+	//Set socket to blocking mode
+	opts = (opts &= ~O_NONBLOCK);
+    if (fcntl(sockfd,F_SETFL,opts) < 0) {
+        perror("fcntl(F_SETFL)");
+        exit(EXIT_FAILURE);
+    }
+	printf("\nUDP Hole Punching Successful.\nStart to communicate..\n");
+
 	while (1)
 	{
 		fflush(stdin);
@@ -222,19 +238,5 @@ void communicate(int sockfd)
 	
 }
 
-int guard(int n, char * err) { if (n == -1) { perror(err); exit(1); } return n; }
 
-bool SetSocketBlockingEnabled(int fd, bool blocking)
-{
-   if (fd < 0) return false;
 
-#ifdef _WIN32
-   unsigned long mode = blocking ? 0 : 1;
-   return (ioctlsocket(fd, FIONBIO, &mode) == 0) ? true : false;
-#else
-   int flags = fcntl(fd, F_GETFL, 0);
-   if (flags == -1) return false;
-   flags = blocking ? (flags ^= O_NONBLOCK) : (flags | O_NONBLOCK);
-   return (fcntl(fd, F_SETFL, flags) == 0) ? true : false;
-#endif
-}

@@ -127,8 +127,6 @@ int stun_implement(int sockfd, struct sockaddr_in servaddr, char* return_ip, uns
 	return 0;
 }
 
-int guard(int n, char * err) { if (n == -1) { perror(err); exit(1); } return n; }
-
 char* get_localaddr(char *info, int n)
 {
 	struct ifaddrs *addresses;
@@ -180,9 +178,17 @@ void communicate(int sockfd)
 	char temp[30] = "Hole Punching\n";
 
 	/*Set socket to non-blocking socket*/
-	//int flags = guard(fcntl(sockfd, F_GETFL), "could not get file flags");
-	//guard(fcntl(sockfd, F_SETFL, flags | O_NONBLOCK), "could not set file flags");
-	SetSocketBlockingEnabled(sockfd, 1);
+	int opts;
+	opts = fcntl(sockfd,F_GETFL);
+    if (opts < 0) {
+        perror("fcntl(F_GETFL)");
+        exit(EXIT_FAILURE);
+    }
+    opts = (opts | O_NONBLOCK);
+    if (fcntl(sockfd,F_SETFL,opts) < 0) {
+        perror("fcntl(F_SETFL)");
+        exit(EXIT_FAILURE);
+    }
 
 	while (1)
 	{	
@@ -204,14 +210,19 @@ void communicate(int sockfd)
 	}
 	
 	sleep(1);
-	printf("\nUDP Hole Punching Successful.\nStart to communicate..\n");
 
 	//Clear socket buffer
 	while(read(sockfd, buf, sizeof(buf)) > 0) {
             strcpy(buf, ""); //attempt to erase all old values
             fflush(stdout);
         }
-	SetSocketBlockingEnabled(sockfd, 0);
+	//Set socket to blocking mode
+	opts = (opts &= ~O_NONBLOCK);
+    if (fcntl(sockfd,F_SETFL,opts) < 0) {
+        perror("fcntl(F_SETFL)");
+        exit(EXIT_FAILURE);
+    }
+	printf("\nUDP Hole Punching Successful.\nStart to communicate..\n");
 
 	while (1)
 	{
@@ -225,19 +236,4 @@ void communicate(int sockfd)
 		memset(buf, 0, sizeof(buf));
 	}
 	
-}
-
-bool SetSocketBlockingEnabled(int fd, bool blocking)
-{
-   if (fd < 0) return false;
-
-#ifdef _WIN32
-   unsigned long mode = blocking ? 0 : 1;
-   return (ioctlsocket(fd, FIONBIO, &mode) == 0) ? true : false;
-#else
-   int flags = fcntl(fd, F_GETFL, 0);
-   if (flags == -1) return false;
-   flags = blocking ? (flags ^= O_NONBLOCK) : (flags | O_NONBLOCK);
-   return (fcntl(fd, F_SETFL, flags) == 0) ? true : false;
-#endif
 }
