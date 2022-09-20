@@ -29,3 +29,4 @@ void start(char **argv);
 char* get_localaddr(char* info, int n);
 void communicate(int sockfd);
 int guard(int n, char * err);
+bool SetSocketBlockingEnabled(int fd, bool blocking);

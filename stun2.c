@@ -179,8 +179,10 @@ void communicate(int sockfd)
 	int sendCheck = 0;
 	char temp[30] = "Hole Punching\n";
 
-	int flags = guard(fcntl(sockfd, F_GETFL), "could not get file flags");
-	guard(fcntl(sockfd, F_SETFL, flags | O_NONBLOCK), "could not set file flags");
+	/*Set socket to non-blocking socket*/
+	//int flags = guard(fcntl(sockfd, F_GETFL), "could not get file flags");
+	//guard(fcntl(sockfd, F_SETFL, flags | O_NONBLOCK), "could not set file flags");
+	SetSocketBlockingEnabled(sockfd, 1);
 
 	while (1)
 	{	
@@ -209,6 +211,7 @@ void communicate(int sockfd)
             strcpy(buf, ""); //attempt to erase all old values
             fflush(stdout);
         }
+	SetSocketBlockingEnabled(sockfd, 0);
 
 	while (1)
 	{
@@ -217,10 +220,24 @@ void communicate(int sockfd)
 		printf("%s", buf);
 		memset(buf, 0, sizeof(buf));
 
-
 		fgets(buf, 100, stdin);
 		sendto(sockfd, buf, sizeof(buf), 0, (const struct sockaddr *) &remote_addr, sizeof(remote_addr)); 
 		memset(buf, 0, sizeof(buf));
 	}
 	
+}
+
+bool SetSocketBlockingEnabled(int fd, bool blocking)
+{
+   if (fd < 0) return false;
+
+#ifdef _WIN32
+   unsigned long mode = blocking ? 0 : 1;
+   return (ioctlsocket(fd, FIONBIO, &mode) == 0) ? true : false;
+#else
+   int flags = fcntl(fd, F_GETFL, 0);
+   if (flags == -1) return false;
+   flags = blocking ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK);
+   return (fcntl(fd, F_SETFL, flags) == 0) ? true : false;
+#endif
 }
