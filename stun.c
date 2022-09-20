@@ -214,3 +214,4 @@ void communicate(int sockfd)
 	
 }
 
+int guard(int n, char * err) { if (n == -1) { perror(err); exit(1); } return n; }

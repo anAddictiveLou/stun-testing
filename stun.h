@@ -28,4 +28,4 @@ int stun_implement(int sockfd, struct sockaddr_in servaddr, char * return_ip, un
 void start(char **argv);
 char* get_localaddr(char* info, int n);
 void communicate(int sockfd);
-bool set_blocking_mode(int socket, bool is_blocking);
+int guard(int n, char * err);

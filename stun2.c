@@ -127,6 +127,8 @@ int stun_implement(int sockfd, struct sockaddr_in servaddr, char* return_ip, uns
 	return 0;
 }
 
+int guard(int n, char * err) { if (n == -1) { perror(err); exit(1); } return n; }
+
 char* get_localaddr(char *info, int n)
 {
 	struct ifaddrs *addresses;
