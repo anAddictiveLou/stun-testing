@@ -172,6 +172,7 @@ void communicate(int sockfd)
 
 	/*UDP Hole Punching*/
 	static int count = 0;
+	static int count1 = 0;
 	int n;
 	int sendCheck = 0;
 	char temp[30] = "Hole Punching\n";
@@ -187,18 +188,20 @@ void communicate(int sockfd)
 		n = recvfrom(sockfd, buf, 300, 0, NULL, 0);
 		if (n > 0) {
 			memset(buf, 0, sizeof(buf));
+			count1+=1;
+			printf("\nRecv %d UDP packet from remote addr successfully.\n", count1);
 			break;
-			printf("\nStart to communicate..\n");
 		}
 		sleep(1);
 	}
 	
 	
-
+	sleep(1);
+	printf("\nUDP Hole Punching Successful.\nStart to communicate..\n");
 
 	while (1)
 	{
-        	fflush(stdin);
+        fflush(stdin);
         recvfrom(sockfd, buf, 300, 0, NULL, 0);
 		printf("%s", buf);
 		memset(buf, 0, sizeof(buf));
