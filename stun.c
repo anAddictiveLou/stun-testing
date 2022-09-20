@@ -174,6 +174,10 @@ void communicate(int sockfd)
 	static int count = 0;
 	static int count1 = 0;
 	char temp[30] = "Hole Punching\n";
+
+	int flags = guard(fcntl(sockfd, F_GETFL), "could not get file flags");
+	guard(fcntl(sockfd, F_SETFL, flags | O_NONBLOCK), "could not set file flags");
+
 	while (1)
 	{	
 		memcpy(buf, temp, sizeof(temp));
