@@ -201,9 +201,14 @@ void communicate(int sockfd)
 		sleep(1);
 	}
 	
-	
 	sleep(1);
 	printf("\nUDP Hole Punching Successful.\nStart to communicate..\n");
+
+	//Clear socket buffer
+	while(read(sockfd, buf, sizeof(buf)) > 0) {
+            strcpy(buf, ""); //attempt to erase all old values
+            fflush(stdout);
+        }
 
 	while (1)
 	{
