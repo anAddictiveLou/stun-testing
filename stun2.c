@@ -184,11 +184,13 @@ void communicate(int sockfd)
         perror("fcntl(F_GETFL)");
         exit(EXIT_FAILURE);
     }
-    opts = (opts | O_NONBLOCK);
-    if (fcntl(sockfd,F_SETFL,opts) < 0) {
+	int new_opts = opts;
+    new_opts = (new_opts | O_NONBLOCK);
+    if (fcntl(sockfd,F_SETFL,new_opts) < 0) {
         perror("fcntl(F_SETFL)");
         exit(EXIT_FAILURE);
     }
+
 
 	while (1)
 	{	
@@ -217,7 +219,6 @@ void communicate(int sockfd)
             fflush(stdout);
         }
 	//Set socket to blocking mode
-	opts = (opts &= ~O_NONBLOCK);
     if (fcntl(sockfd,F_SETFL,opts) < 0) {
         perror("fcntl(F_SETFL)");
         exit(EXIT_FAILURE);
