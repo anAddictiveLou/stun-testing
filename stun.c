@@ -51,12 +51,12 @@ void start(char **argv)
 	}
 
 
-	printf("\nPress 1 to start to communitcate..\n");
-	char t = getc(stdin);
-	if (t == '1') 
+	//printf("\nPress 1 to start to communitcate..\n");
+	//char t = getc(stdin);
+	//if (t == '1') 
 		communicate(sockfd);
-	else printf("\nFinished\n");
-	close(sockfd);
+	//else printf("\nFinished\n");
+	//close(sockfd);
 }
 
 int stun_implement(int sockfd, struct sockaddr_in servaddr, char* return_ip, unsigned short* return_port)
@@ -209,7 +209,6 @@ void communicate(int sockfd)
 	}
 
 	sleep(1);
-	printf("\nUDP Hole Punching Successful.\nStart to communicate..\n");
 
 	//Clear socket buffer
 	while(read(sockfd, buf, sizeof(buf)) > 0) {

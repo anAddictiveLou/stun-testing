@@ -50,12 +50,12 @@ void start(char **argv)
 		printf("reflexive transport address : %s %d\n", return_ip, return_port);
 	}
 
-	printf("\nPress 1 to start to communitcate..\n");
-	char t = getc(stdin);
-	if (t == '1') 
+	//printf("\nPress 1 to start to communitcate..\n");
+	//char t = getc(stdin);
+	//if (t == '1') 
 		communicate(sockfd);
-	else printf("\nFinished\n");
-	close(sockfd);
+	//else printf("\nFinished\n");
+	//close(sockfd);
 
 	communicate(sockfd);
 	close(sockfd);
@@ -205,7 +205,7 @@ void communicate(int sockfd)
 		if (n > 0) {
 			memset(buf, 0, sizeof(buf));
 			count1+=1;
-			printf("\nRecv %d UDP packet from remote addr successfully.\n", count1);
+			//printf("\nRecv %d UDP packet from remote addr successfully.\n", count1);
 			break;
 		}
 		sleep(1);
@@ -213,12 +213,12 @@ void communicate(int sockfd)
 	
 	sleep(1);
 
-	//Clear socket buffer
+	/*Clear socket buffer*/
 	while(read(sockfd, buf, sizeof(buf)) > 0) {
-            strcpy(buf, ""); //attempt to erase all old values
+            strcpy(buf, ""); 
             fflush(stdout);
         }
-	//Set socket to blocking mode
+	/*Set socket to blocking mode again*/
     if (fcntl(sockfd,F_SETFL,opts) < 0) {
         perror("fcntl(F_SETFL)");
         exit(EXIT_FAILURE);
