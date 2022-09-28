@@ -226,12 +226,15 @@ void communicate(int sockfd)
 	while (1)
 	{
 		fflush(stdin);
+		printf("\nSend to remote: ");
 		fgets(buf, 100, stdin);
 		sendto(sockfd, buf, sizeof(buf), 0, (const struct sockaddr *) &remote_addr, sizeof(remote_addr));
 		if (n == -1) 
 			handle_error("send_to_afterhp"); 
 		memset(buf, 0, sizeof(buf));
+		printf("*****************************");
 
+		printf("\nRecv from remote: ");
 		recvfrom(sockfd, buf, 300, 0, NULL, 0);
 		printf("%s", buf);
 		sleep(1);

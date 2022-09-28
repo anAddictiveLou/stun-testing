@@ -227,10 +227,13 @@ void communicate(int sockfd)
 	while (1)
 	{
         fflush(stdin);
+		printf("\nRevc from remote:");
         recvfrom(sockfd, buf, 300, 0, NULL, 0);
 		printf("%s", buf);
 		memset(buf, 0, sizeof(buf));
+		printf("*****************************");
 
+		printf("\nSend to remote: ");
 		fgets(buf, 100, stdin);
 		n = sendto(sockfd, buf, sizeof(buf), 0, (const struct sockaddr *) &remote_addr, sizeof(remote_addr)); 
 		if (n == -1) 
@@ -238,5 +241,4 @@ void communicate(int sockfd)
 		sleep(1);
 		memset(buf, 0, sizeof(buf));
 	}
-	
 }
