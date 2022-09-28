@@ -227,11 +227,14 @@ void communicate(int sockfd)
 	{
 		fflush(stdin);
 		fgets(buf, 100, stdin);
-		sendto(sockfd, buf, sizeof(buf), 0, (const struct sockaddr *) &remote_addr, sizeof(remote_addr)); 
+		sendto(sockfd, buf, sizeof(buf), 0, (const struct sockaddr *) &remote_addr, sizeof(remote_addr));
+		if (n == -1) 
+			handle_error("send_to_afterhp"); 
 		memset(buf, 0, sizeof(buf));
 
 		recvfrom(sockfd, buf, 300, 0, NULL, 0);
 		printf("%s", buf);
+		sleep(1);
 		memset(buf, 0, sizeof(buf));
 	}
 	
