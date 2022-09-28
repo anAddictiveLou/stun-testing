@@ -54,9 +54,9 @@ void start(char **argv)
 	//printf("\nPress 1 to start to communitcate..\n");
 	//char t = getc(stdin);
 	//if (t == '1') 
-		communicate(sockfd);
+	communicate(sockfd);
 	//else printf("\nFinished\n");
-	//close(sockfd);
+	close(sockfd);
 }
 
 int stun_implement(int sockfd, struct sockaddr_in servaddr, char* return_ip, unsigned short* return_port)
