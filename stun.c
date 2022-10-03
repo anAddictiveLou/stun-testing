@@ -54,9 +54,9 @@ void start(char **argv)
 	//printf("\nPress 1 to start to communitcate..\n");
 	//char t = getc(stdin);
 	//if (t == '1') 
-	communicate(sockfd);
+		communicate(sockfd);
 	//else printf("\nFinished\n");
-	close(sockfd);
+	//close(sockfd);
 }
 
 int stun_implement(int sockfd, struct sockaddr_in servaddr, char* return_ip, unsigned short* return_port)
@@ -216,28 +216,23 @@ void communicate(int sockfd)
             fflush(stdout);
         }
 
-	//Set socket to blocking mode
-    if (fcntl(sockfd,F_SETFL,opts) < 0) {
-        perror("fcntl(F_SETFL)");
-        exit(EXIT_FAILURE);
-    }
-	printf("\nUDP Hole Punching Successful.\nStart to communicate..\n");
+	/*Set socket to blocking mode**
+    * if (fcntl(sockfd,F_SETFL,opts) < 0) {
+    *    perror("fcntl(F_SETFL)");
+    *    exit(EXIT_FAILURE);
+    * }
+	* printf("\nUDP Hole Punching Successful.\nStart to communicate..\n");
+	* */
 
 	while (1)
 	{
 		fflush(stdin);
-		printf("\nSend to remote: ");
 		fgets(buf, 100, stdin);
-		sendto(sockfd, buf, sizeof(buf), 0, (const struct sockaddr *) &remote_addr, sizeof(remote_addr));
-		if (n == -1) 
-			handle_error("send_to_afterhp"); 
+		sendto(sockfd, buf, sizeof(buf), 0, (const struct sockaddr *) &remote_addr, sizeof(remote_addr)); 
 		memset(buf, 0, sizeof(buf));
-		printf("*****************************");
 
-		printf("\nRecv from remote: ");
 		recvfrom(sockfd, buf, 300, 0, NULL, 0);
 		printf("%s", buf);
-		sleep(1);
 		memset(buf, 0, sizeof(buf));
 	}
 	
